@@ -2,7 +2,7 @@ const express = require("express");
 const Task = require("../models/task");
 const router = new express.Router();
 
-router.post("/create", async (req, res) => {
+router.post("/task/create", async (req, res) => {
   const task = new Task(req.body);
 
   try {
@@ -13,7 +13,7 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.get("/getList", async (req, res) => {
+router.get("/task/getList", async (req, res) => {
   try {
     const tasks = await Task.find({});
     res.send(tasks);
@@ -22,7 +22,7 @@ router.get("/getList", async (req, res) => {
   }
 });
 
-router.get("/getById:id", async (req, res) => {
+router.get("/task/getById/:id", async (req, res) => {
   const _id = new Task(req.params.id);
   try {
     const task = await Task.findById(_id);
@@ -36,7 +36,7 @@ router.get("/getById:id", async (req, res) => {
   }
 });
 
-router.delete("/delete:id", async (req, res) => {
+router.delete("/task/delete/:id", async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
 
@@ -49,7 +49,7 @@ router.delete("/delete:id", async (req, res) => {
   }
 });
 
-router.patch("/update:id", async (req, res) => {
+router.patch("/task/update:id", async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["title", "description", "completed"];
   const isValidOperation = updates.every(update =>
