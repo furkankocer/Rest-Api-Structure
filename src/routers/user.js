@@ -12,6 +12,18 @@ router.post("/user/create", async (req, res) => {
   }
 });
 
+router.post("/user/login", async (req, res) => {
+  try {
+    const user = await User.findByCredentials(
+      req.body.email,
+      req.body.password
+    );
+    res.send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
 router.get("/user/getList", async (req, res) => {
   try {
     const users = await User.find({});
@@ -75,4 +87,5 @@ router.patch("/user/update/:id", async (req, res) => {
     res.status(400).send(error);
   }
 });
+
 module.exports = router;
