@@ -2,13 +2,77 @@ const express = require("express");
 const Task = require("../models/task");
 const router = new express.Router();
 
-router.post("/tasks", async (req, res) => {
+router.post("/create", async (req, res) => {
   const task = new Task(req.body);
+
   try {
     await task.save();
     res.status(201).send(task);
   } catch (error) {
     res.status(500).send(error);
+  }
+});
+
+router.get("/getList", async (req, res) => {
+  try {
+    const tasks = await Task.find({});
+    res.send(tasks);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.get("/getById:id", async (req, res) => {
+  const _id = new Task(req.params.id);
+  try {
+    const task = await Task.findById(_id);
+
+    if (!task) {
+      return res.status(404).send();
+    }
+    res.send(task);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.delete("/delete:id", async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+
+    if (!task) {
+      res.status(404).send();
+    }
+    res.send(task);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+router.patch("/update:id", async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["title", "description", "completed"];
+  const isValidOperation = updates.every(update =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "It is not valid operation" });
+  }
+
+  try {
+    const task = await Task.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true
+    });
+
+    if (!task) {
+      return res.status(400).send();
+    }
+
+    res.send(task);
+  } catch (error) {
+    res.status(400).send(error);
   }
 });
 
