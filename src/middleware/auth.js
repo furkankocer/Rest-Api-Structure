@@ -13,7 +13,7 @@ const auth = async (req, res, next) => {
       throw new Error("Auth is failed");
     }
 
-    req.token = token
+    req.token = token;
     req.user = user;
     next();
   } catch (error) {
@@ -21,4 +21,4 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth
+module.exports = auth;

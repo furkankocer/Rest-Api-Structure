@@ -32,7 +32,7 @@ router.post("/user/logout", auth, async (req, res) => {
     req.user.tokens = req.user.tokens.filter(token => {
       return token.token !== req.token;
     });
-     await req.user.save()
+    await req.user.save();
     res.send();
   } catch (error) {
     res.status(500).send();
@@ -65,21 +65,20 @@ router.get("/user/getById/:id", async (req, res) => {
   }
 });
 
-router.delete("/user/delete/:id", async (req, res) => {
-  const _id = req.params.id;
-
+router.delete("/user/delete/me", auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(_id);
-    if (!user) {
-      return res.status(404).send();
-    }
-    res.send(user);
+    // const user = await User.findByIdAndDelete(req.user._id);
+    // if (!user) {
+    //   return res.status(404).send();
+    // }
+    await req.user.remove();
+    res.send(req.user);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-router.patch("/user/update/:id", async (req, res) => {
+router.patch("/user/update/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowUpdates = ["name", "email", "password", "age"];
   const isValidUpdate = updates.every(update => allowUpdates.includes(update));
@@ -87,21 +86,9 @@ router.patch("/user/update/:id", async (req, res) => {
     return res.status(400).send({ error: "Invalid Operation" });
   }
   try {
-    const user = await User.findById(req.params.id);
-    updates.forEach(update => (user[update] = req.body[update]));
-    await user.save();
-    // updates.forEach(update => {
-    //   user[update] = req.body[update];
-    // });
-
-    // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    //   new: true,
-    //   runValidators: true
-    // });
-    if (!user) {
-      return res.status(404).send();
-    }
-    res.send(user);
+    updates.forEach(update => (req.user[update] = req.body[update]));
+    await req.user.save();
+    res.send(req.user);
   } catch (error) {
     res.status(400).send(error);
   }
