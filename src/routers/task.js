@@ -7,6 +7,8 @@ router.post("/task/create", async (req, res) => {
 
   try {
     await task.save();
+    const user = User.findOne(req.body.email)
+    user.generateAuthToken()
     res.status(201).send(task);
   } catch (error) {
     res.status(500).send(error);
