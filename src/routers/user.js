@@ -21,15 +21,26 @@ router.post("/user/login", async (req, res) => {
       req.body.password
     );
     const token = await user.generateAuthToken();
-    res.send(user);
+    res.send({ user, token });
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-router.get("/user/getList/me", auth, async (req, res) => {
+router.post("/user/logout", auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter(token => {
+      return token.token !== req.token;
+    });
+     await req.user.save()
+    res.send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
 
-  res.send(req.user)
+router.get("/user/getList/me", auth, async (req, res) => {
+  res.send(req.user);
 });
 
 router.get("/user/getList", async (req, res) => {
