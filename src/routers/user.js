@@ -82,9 +82,11 @@ router.patch("/user/update/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowUpdates = ["name", "email", "password", "age"];
   const isValidUpdate = updates.every(update => allowUpdates.includes(update));
+
   if (!isValidUpdate) {
     return res.status(400).send({ error: "Invalid Operation" });
   }
+
   try {
     updates.forEach(update => (req.user[update] = req.body[update]));
     await req.user.save();
