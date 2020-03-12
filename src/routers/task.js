@@ -21,15 +21,15 @@ router.get("/task/getList", auth, async (req, res) => {
   try {
     //const tasks = await Task.find({ owner: req.user._id, path: 'tasks', match: {completed:false} });
     const match = {};
-    const sort = {}
-    
+    const sort = {};
+
     if (req.query.completed) {
       match.completed = req.query.completed === true;
     }
 
-    if(req.query.sortBy){
-      const parts = req.query.sortBy.split(':')
-      sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+    if (req.query.sortBy) {
+      const parts = req.query.sortBy.split(":");
+      sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
     }
     await req.user
       .populate({
